@@ -114,6 +114,7 @@ def test_is_bumpable_is_false_when_source_type_is_git(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is False
 
@@ -130,6 +131,7 @@ def test_is_bumpable_is_false_when_source_type_is_file(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is False
 
@@ -146,6 +148,7 @@ def test_is_bumpable_is_false_when_source_type_is_directory(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is False
 
@@ -158,6 +161,7 @@ def test_is_bumpable_is_false_when_name_is_python(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is False
 
@@ -170,6 +174,7 @@ def test_is_bumpable_is_false_when_dependency_not_in_only_packages(
         dependency=dependency,
         only_packages=["bar"],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is False
 
@@ -185,6 +190,7 @@ def test_is_bumpable_is_false_when_version_pinned(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is False
 
@@ -200,6 +206,7 @@ def test_is_bumpable_is_false_when_version_wildcard(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is False
 
@@ -215,6 +222,7 @@ def test_is_bumpable_is_false_when_version_less_than(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is False
 
@@ -230,6 +238,7 @@ def test_is_bumpable_is_false_when_version_greater_than(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is False
 
@@ -245,6 +254,7 @@ def test_is_bumpable_is_false_when_version_less_than_or_equal(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is False
 
@@ -260,6 +270,7 @@ def test_is_bumpable_is_false_when_version_inequality(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is False
 
@@ -275,6 +286,7 @@ def test_is_bumpable_is_false_when_version_multiple_requirements(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is False
 
@@ -290,6 +302,7 @@ def test_is_bumpable_is_true_when_version_caret(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is True
 
@@ -305,6 +318,7 @@ def test_is_bumpable_is_true_when_version_tilde(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is True
 
@@ -320,6 +334,7 @@ def test_is_bumpable_is_true_when_version_greater_than_or_equal(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is True
 
@@ -335,11 +350,12 @@ def test_is_bumpable_is_true_when_version_tilde_pep440(
         dependency=dependency,
         only_packages=[],
         latest=False,
+        pinned=False,
     )
     assert is_bumpable is True
 
 
-def test_is_bumpable_is_true_when_version_pinned_and_latest(
+def test_is_bumpable_is_false_when_version_pinned_and_latest(
     up_cmd_tester: TestUpCommand,
 ) -> None:
     dependency = Dependency(
@@ -350,6 +366,23 @@ def test_is_bumpable_is_true_when_version_pinned_and_latest(
         dependency=dependency,
         only_packages=[],
         latest=True,
+        pinned=False,
+    )
+    assert is_bumpable is False
+
+
+def test_is_bumpable_is_true_when_version_pinned_and_latest_and_pinned(
+    up_cmd_tester: TestUpCommand,
+) -> None:
+    dependency = Dependency(
+        name="foo",
+        constraint="1.2.3",
+    )
+    is_bumpable = up_cmd_tester.is_bumpable(
+        dependency=dependency,
+        only_packages=[],
+        latest=True,
+        pinned=True,
     )
     assert is_bumpable is True
 
@@ -365,6 +398,7 @@ def test_is_bumpable_is_true_when_version_wildcard_and_latest(
         dependency=dependency,
         only_packages=[],
         latest=True,
+        pinned=False,
     )
     assert is_bumpable is True
 
@@ -380,6 +414,7 @@ def test_is_bumpable_is_true_when_version_less_than_and_latest(
         dependency=dependency,
         only_packages=[],
         latest=True,
+        pinned=False,
     )
     assert is_bumpable is True
 
@@ -395,6 +430,7 @@ def test_is_bumpable_is_true_when_version_greater_than_and_latest(
         dependency=dependency,
         only_packages=[],
         latest=True,
+        pinned=False,
     )
     assert is_bumpable is True
 
@@ -410,5 +446,6 @@ def test_is_bumpable_is_true_when_version_less_than_or_equal_and_latest(
         dependency=dependency,
         only_packages=[],
         latest=True,
+        pinned=False,
     )
     assert is_bumpable is True

@@ -35,6 +35,7 @@ def test_handle_dependency(
     up_cmd_tester.handle_dependency(
         dependency=dependency,
         latest=False,
+        pinned=False,
         only_packages=[],
         pyproject_content=content,
         selector=selector,
@@ -80,6 +81,7 @@ def test_handle_dependency_with_latest(
     up_cmd_tester.handle_dependency(
         dependency=dependency,
         latest=True,
+        pinned=True,
         only_packages=[],
         pyproject_content=content,
         selector=selector,

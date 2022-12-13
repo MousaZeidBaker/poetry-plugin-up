@@ -33,6 +33,11 @@ class UpCommand(InstallerCommand):
             description="Update to latest available compatible versions.",
         ),
         option(
+            long_name="pinned",
+            short_name=None,
+            description="Included pinned dependencies when updating to latest.",
+        ),
+        option(
             long_name="no-install",
             short_name=None,
             description="Do not install dependencies, only refresh "
@@ -49,6 +54,7 @@ class UpCommand(InstallerCommand):
     def handle(self) -> int:
         only_packages = self.argument("packages")
         latest = self.option("latest")
+        pinned = self.option("pinned")
         no_install = self.option("no-install")
         dry_run = self.option("dry-run")
 
@@ -60,6 +66,7 @@ class UpCommand(InstallerCommand):
                 self.handle_dependency(
                     dependency=dependency,
                     latest=latest,
+                    pinned=pinned,
                     only_packages=only_packages,
                     pyproject_content=pyproject_content,
                     selector=selector,
@@ -91,13 +98,14 @@ class UpCommand(InstallerCommand):
         self,
         dependency: Dependency,
         latest: bool,
+        pinned: bool,
         only_packages: List[str],
         pyproject_content: TOMLDocument,
         selector: VersionSelector,
     ) -> None:
         """Handles a dependency"""
 
-        if not self.is_bumpable(dependency, only_packages, latest):
+        if not self.is_bumpable(dependency, only_packages, latest, pinned):
             return
 
         target_package_version = dependency.pretty_constraint
@@ -132,6 +140,7 @@ class UpCommand(InstallerCommand):
         dependency: Dependency,
         only_packages: List[str],
         latest: bool,
+        pinned: bool,
     ) -> bool:
         """Determines if a dependency can be bumped in pyproject.toml"""
 
@@ -141,8 +150,9 @@ class UpCommand(InstallerCommand):
             return False
         if only_packages and dependency.name not in only_packages:
             return False
+
+        constraint = dependency.pretty_constraint
         if not latest:
-            constraint = dependency.pretty_constraint
             if constraint[0].isdigit():
                 # pinned
                 return False
@@ -163,6 +173,11 @@ class UpCommand(InstallerCommand):
                 return False
             if len(constraint.split(",")) > 1:
                 # multiple requirements e.g. '>=1.0.0, <2.0.0'
+                return False
+
+        if not pinned:
+            if constraint[0].isdigit():
+                # pinned
                 return False
 
         return True
