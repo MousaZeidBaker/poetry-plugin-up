@@ -1,0 +1,199 @@
+from typing import Any, Dict, Iterable, List
+
+from cleo.helpers import argument, option
+from poetry.console.commands.installer_command import InstallerCommand
+from poetry.core.packages.dependency import Dependency
+from poetry.core.packages.dependency_group import DependencyGroup
+from poetry.core.packages.package import Package
+from poetry.version.version_selector import VersionSelector
+from tomlkit import dumps
+from tomlkit.toml_document import TOMLDocument
+
+
+class UpCommand(InstallerCommand):
+    name = "up"
+    description = (
+        "Update dependencies and bump versions in <comment>pyproject.toml</>"
+    )
+
+    arguments = [
+        argument(
+            name="packages",
+            description="The packages to update.",
+            optional=True,
+            multiple=True,
+        )
+    ]
+
+    options = [
+        *InstallerCommand._group_dependency_options(),
+        option(
+            long_name="latest",
+            short_name=None,
+            description="Update to latest available compatible versions.",
+        ),
+        option(
+            long_name="no-install",
+            short_name=None,
+            description="Do not install dependencies, only refresh "
+            "<comment>pyproject.toml</> and <comment>poetry.lock</>.",
+        ),
+        option(
+            long_name="dry-run",
+            short_name=None,
+            description="Output bumped <comment>pyproject.toml</> but do not "
+            "execute anything.",
+        ),
+    ]
+
+    def handle(self) -> int:
+        only_packages = self.argument("packages")
+        latest = self.option("latest")
+        no_install = self.option("no-install")
+        dry_run = self.option("dry-run")
+
+        selector = VersionSelector(self.poetry.pool)
+        pyproject_content = self.poetry.file.read()
+
+        for group in self.get_groups():
+            for dependency in group.dependencies:
+                self.handle_dependency(
+                    dependency=dependency,
+                    latest=latest,
+                    only_packages=only_packages,
+                    pyproject_content=pyproject_content,
+                    selector=selector,
+                )
+
+        if dry_run:
+            self.line(dumps(pyproject_content))
+            return 0
+
+        # write new content to pyproject.toml
+        self.poetry.file.write(pyproject_content)
+
+        if no_install:
+            # update lock file
+            self.call(name="lock", args="--no-update")
+            return 0
+
+        # update dependencies
+        self.call(name="update")
+        return 0
+
+    def get_groups(self) -> Iterable[DependencyGroup]:
+        """Returns activated dependency groups"""
+
+        for group in self.activated_groups:
+            yield self.poetry.package.dependency_group(group)
+
+    def handle_dependency(
+        self,
+        dependency: Dependency,
+        latest: bool,
+        only_packages: List[str],
+        pyproject_content: TOMLDocument,
+        selector: VersionSelector,
+    ) -> None:
+        """Handles a dependency"""
+
+        if not self.is_bumpable(dependency, only_packages, latest):
+            return
+
+        target_package_version = dependency.pretty_constraint
+        if latest:
+            target_package_version = "*"
+
+        candidate: Package = selector.find_best_candidate(
+            package_name=dependency.name,
+            target_package_version=target_package_version,
+            allow_prereleases=dependency.allows_prereleases(),
+            source=dependency.source_name,
+        )
+        if candidate is None:
+            self.line(f"No new version for '{dependency.name}'")
+            return
+
+        new_version = "^" + candidate.pretty_version
+        if not latest:
+            if dependency.pretty_constraint[0] == "~":
+                new_version = "~" + candidate.pretty_version
+            elif dependency.pretty_constraint[:2] == ">=":
+                new_version = ">=" + candidate.pretty_version
+
+        self.bump_version_in_pyproject_content(
+            dependency=dependency,
+            new_version=new_version,
+            pyproject_content=pyproject_content,
+        )
+
+    @staticmethod
+    def is_bumpable(
+        dependency: Dependency,
+        only_packages: List[str],
+        latest: bool,
+    ) -> bool:
+        """Determines if a dependency can be bumped in pyproject.toml"""
+
+        if dependency.source_type in ["git", "file", "directory"]:
+            return False
+        if dependency.name in ["python"]:
+            return False
+        if only_packages and dependency.name not in only_packages:
+            return False
+        if not latest:
+            constraint = dependency.pretty_constraint
+            if constraint[0].isdigit():
+                # pinned
+                return False
+            if constraint[0] == "*":
+                # wildcard
+                return False
+            if constraint[0] == "<" and constraint[1].isdigit():
+                # less than
+                return False
+            if constraint[0] == ">" and constraint[1].isdigit():
+                # greater than
+                return False
+            if constraint[:2] == "<=":
+                # less than or equal to
+                return False
+            if constraint[:2] == "!=":
+                # inequality
+                return False
+            if len(constraint.split(",")) > 1:
+                # multiple requirements e.g. '>=1.0.0, <2.0.0'
+                return False
+
+        return True
+
+    @staticmethod
+    def bump_version_in_pyproject_content(
+        dependency: Dependency,
+        new_version: str,
+        pyproject_content: TOMLDocument,
+    ) -> None:
+        """Bumps versions in pyproject content (pyproject.toml)"""
+
+        poetry_content: Dict[str, Any] = pyproject_content["tool"]["poetry"]
+
+        for group in dependency.groups:
+            # find section to modify
+            section = {}
+            if group == "main":
+                section = poetry_content.get("dependencies", {})
+            elif group == "dev" and "dev-dependencies" in poetry_content:
+                # take account for the old `dev-dependencies` section
+                section = poetry_content.get("dev-dependencies", {})
+            else:
+                section = (
+                    poetry_content.get("group", {})
+                    .get(group, {})
+                    .get("dependencies", {})
+                )
+
+            # modify section
+            if isinstance(section.get(dependency.pretty_name), str):
+                section[dependency.pretty_name] = new_version
+            elif "version" in section.get(dependency.pretty_name, {}):
+                section[dependency.pretty_name]["version"] = new_version

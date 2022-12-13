@@ -1,0 +1,77 @@
+# Workflow to release our package
+
+name: Release
+on:
+  push:
+    branches:
+      - master
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+    steps:
+      - name: Release
+        id: release
+        uses: google-github-actions/release-please-action@v3
+        with:
+          # https://github.com/google-github-actions/release-please-action#configuration
+          release-type: python
+          changelog-types: >
+            [
+              {"type": "build", "section": "🏗️ Build System", "hidden": true},
+              {"type": "chore", "section": "🧹 Miscellaneous Chores", "hidden": true},
+              {"type": "ci", "section": "👷 Continuous Integration", "hidden": true},
+              {"type": "docs", "section": "📝 Documentation"},
+              {"type": "feat", "section": "🚀 Features"},
+              {"type": "fix", "section": "🐛 Bug Fixes"},
+              {"type": "perf", "section": "⚡ Performance Improvements"},
+              {"type": "refactor", "section": "♻️ Code Refactoring", "hidden": true},
+              {"type": "revert", "section": "⏪️ Reverts"},
+              {"type": "style", "section": "💄 Styles", "hidden": true},
+              {"type": "test", "section": "✅ Tests", "hidden": true}
+            ]
+          include-v-in-tag: false
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    needs: release
+    # only run when a new release is created
+    if: ${{ needs.release.outputs.release_created }}
+    strategy:
+      fail-fast: true
+      matrix:
+        environment: [ testpypi, pypi ]
+    environment: ${{ matrix.environment }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.2.1
+
+      - name: Build
+        run: poetry build
+
+      - name: Publish testpypi
+        if: ${{ matrix.environment=='testpypi' }}
+        env:
+          POETRY_REPOSITORIES_TESTPYPI_URL: https://test.pypi.org/legacy/
+          POETRY_HTTP_BASIC_TESTPYPI_USERNAME: __token__
+          POETRY_HTTP_BASIC_TESTPYPI_PASSWORD: ${{secrets.TESTPYPI_API_TOKEN}}
+        run: poetry publish --repository testpypi
+
+      - name: Publish pypi
+        if: ${{ matrix.environment=='pypi' }}
+        env:
+          POETRY_HTTP_BASIC_PYPI_USERNAME: __token__
+          POETRY_HTTP_BASIC_PYPI_PASSWORD: ${{secrets.PYPI_API_TOKEN}}
+        run: poetry publish

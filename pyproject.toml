@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "poetry-plugin-up"
+version = "0.0.0"
+description = "Poetry plugin that updates dependencies and bumps their versions in pyproject.toml file"
+authors = ["Mousa Zeid Baker"]
+packages = [
+    { include = "poetry_plugin_up", from = "src" },
+]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/MousaZeidBaker/poetry-plugin-up"
+repository = "https://github.com/MousaZeidBaker/poetry-plugin-up"
+keywords=[
+    "packaging",
+    "dependency",
+    "poetry",
+    "update",
+    "upgrade",
+]
+classifiers=[
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+include = ["LICENSE"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+poetry = "^1.2.0"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^2.20.0"
+pytest = "^7.2.0"
+pytest-mock = "^3.10.0"
+
+[tool.poetry.plugins."poetry.application.plugin"]
+up = "poetry_plugin_up.plugin:UpApplicationPlugin"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 80
+
+[tool.isort]
+profile = "black"

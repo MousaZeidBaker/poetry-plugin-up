@@ -1,0 +1,50 @@
+# Workflow to test our package
+
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ '3.7', '3.8', '3.9', '3.10' ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.3.0
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Lint
+        run: |
+          source $(poetry env info --path)/bin/activate
+          pre-commit install --install-hooks
+          pre-commit run --all-files
+          pre-commit run commitizen-branch --hook-stage push
+
+      - name: Test
+        run: |
+          source $(poetry env info --path)/bin/activate
+          pytest tests -vv
+          poetry up --help
+
+      - name: Build
+        run: poetry build

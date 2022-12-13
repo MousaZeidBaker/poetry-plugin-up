@@ -1,0 +1,46 @@
+# https://pre-commit.com/#pre-commit-configyaml---top-level
+default_stages:
+  - commit
+default_install_hook_types:
+  - pre-commit
+  - commit-msg
+  - pre-push
+exclude: pypoetry
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace # https://github.com/pre-commit/pre-commit-hooks/tree/v4.3.0#trailing-whitespace
+      - id: end-of-file-fixer # https://github.com/pre-commit/pre-commit-hooks/tree/v4.3.0#end-of-file-fixer
+      - id: check-json # https://github.com/pre-commit/pre-commit-hooks/tree/v4.3.0#check-json
+      - id: check-yaml # https://github.com/pre-commit/pre-commit-hooks/tree/v4.3.0#check-yaml
+      - id: check-toml # https://github.com/pre-commit/pre-commit-hooks/tree/v4.3.0#check-toml
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+      - id: black
+  - repo: https://github.com/pycqa/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+  - repo: https://github.com/pycqa/flake8
+    rev: 5.0.4
+    hooks:
+      - id: flake8
+        additional_dependencies:
+          - flake8-black
+          - flake8-isort
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v2.37.1
+    hooks:
+      - id: commitizen
+        stages:
+          - commit-msg
+      - id: commitizen-branch
+        stages:
+          - push
+        args:
+          - --rev-range
+          - origin/master..HEAD
+        always_run: true
+        pass_filenames: false

@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "simple-project"
+version = "1.2.3"
+description = "Some description."
+authors = ["Mousa Zeid Baker"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+foo = "^2.2.2"
+bar = "^2.2.2"
+baz = {version = "^2.2.2", extras = ["qux", "quux"]}
+corge = {version = "^2.2.2", optional = true}
+grault = {version = "^2.2.2", allow-prereleases = true}
+garply = {path = "./"}
+waldo = {git = "https://example.com/test/project.git"}
+
+[tool.poetry.group.dev.dependencies]
+fred = "1.1.1"
+plugh = "^2.2.2"
+xyzzy = "~2.2.2"
+nacho = "<1.1.1"
+thud = ">1.1.1"
+
+[tool.poetry.group.docs.dependencies]
+foobar = "<=1.1.1"
+foobaz = ">=2.2.2"
+fooqux = "!=1.1.1"
+fooquux = "*"
+Foo_Corge = "^2.2.2"
