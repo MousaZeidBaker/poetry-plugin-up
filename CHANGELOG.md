@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.1.0...0.2.0) (2022-12-13)
+
+
+### 🚀 Features
+
+* add pinned option to include pinned dependencies ([7ff01f9](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/7ff01f9eb7e48e27ed5d386e617d029b385b22e4))
+
 ## 0.1.0 (2022-12-13)
 
 
