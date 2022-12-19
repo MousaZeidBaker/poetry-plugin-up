@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.2.0...0.2.1) (2022-12-19)
+
+
+### 🐛 Bug Fixes
+
+* revert pyproject.toml changes on error ([0e6c388](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/0e6c388b375b05f3121c4c1fa756aa10e4f9d5fe))
+
 ## [0.2.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.1.0...0.2.0) (2022-12-13)
 
 
