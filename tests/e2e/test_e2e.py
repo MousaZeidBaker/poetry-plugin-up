@@ -22,6 +22,10 @@ def test_command(
         "poetry.version.version_selector.VersionSelector.find_best_candidate",
         side_effect=packages,
     )
+    mocker.patch(
+        "poetry.console.commands.installer_command.InstallerCommand.reset_poetry",  # noqa: E501
+        return_value=None,
+    )
 
     path = project_path / "expected_pyproject.toml"
     expected = PyProjectTOML(path).file.read()
@@ -46,6 +50,10 @@ def test_command_with_latest(
         "poetry.version.version_selector.VersionSelector.find_best_candidate",
         side_effect=packages,
     )
+    mocker.patch(
+        "poetry.console.commands.installer_command.InstallerCommand.reset_poetry",  # noqa: E501
+        return_value=None,
+    )
 
     path = project_path / "expected_pyproject_with_latest.toml"
     expected = PyProjectTOML(path).file.read()
@@ -68,6 +76,10 @@ def test_command_with_dry_run(
     mocker.patch(
         "poetry.version.version_selector.VersionSelector.find_best_candidate",
         side_effect=packages,
+    )
+    mocker.patch(
+        "poetry.console.commands.installer_command.InstallerCommand.reset_poetry",  # noqa: E501
+        return_value=None,
     )
 
     expected = PyProjectTOML(tmp_pyproject_path).file.read()
@@ -93,6 +105,10 @@ def test_command_with_no_install(
         "poetry.version.version_selector.VersionSelector.find_best_candidate",
         side_effect=packages,
     )
+    mocker.patch(
+        "poetry.console.commands.installer_command.InstallerCommand.reset_poetry",  # noqa: E501
+        return_value=None,
+    )
 
     path = project_path / "expected_pyproject.toml"
     expected = PyProjectTOML(path).file.read()
@@ -100,3 +116,29 @@ def test_command_with_no_install(
     assert app_tester.execute("up --no-install") == 0
     assert PyProjectTOML(tmp_pyproject_path).file.read() == expected
     command_call.assert_called_once_with(name="lock", args="--no-update")
+
+
+def test_command_reverts_pyproject_on_error(
+    app_tester: ApplicationTester,
+    packages: List[Package],
+    mocker: MockerFixture,
+    tmp_pyproject_path: Path,
+) -> None:
+    command_call = mocker.patch(
+        "poetry.console.commands.command.Command.call",
+        side_effect=Exception,
+    )
+    mocker.patch(
+        "poetry.version.version_selector.VersionSelector.find_best_candidate",
+        side_effect=packages,
+    )
+    mocker.patch(
+        "poetry.console.commands.installer_command.InstallerCommand.reset_poetry",  # noqa: E501
+        return_value=None,
+    )
+
+    expected = PyProjectTOML(tmp_pyproject_path).file.read()
+
+    assert app_tester.execute("up") == 1
+    assert PyProjectTOML(tmp_pyproject_path).file.read() == expected
+    command_call.assert_called_once_with(name="update")

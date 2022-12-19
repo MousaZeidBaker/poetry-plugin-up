@@ -60,6 +60,7 @@ class UpCommand(InstallerCommand):
 
         selector = VersionSelector(self.poetry.pool)
         pyproject_content = self.poetry.file.read()
+        original_pyproject_content = self.poetry.file.read()
 
         for group in self.get_groups():
             for dependency in group.dependencies:
@@ -78,14 +79,19 @@ class UpCommand(InstallerCommand):
 
         # write new content to pyproject.toml
         self.poetry.file.write(pyproject_content)
+        self.reset_poetry()
 
-        if no_install:
-            # update lock file
-            self.call(name="lock", args="--no-update")
-            return 0
-
-        # update dependencies
-        self.call(name="update")
+        try:
+            if no_install:
+                # update lock file
+                self.call(name="lock", args="--no-update")
+            else:
+                # update dependencies
+                self.call(name="update")
+        except Exception as e:
+            self.line("\nReverting <comment>pyproject.toml</>")
+            self.poetry.file.write(original_pyproject_content)
+            raise e
         return 0
 
     def get_groups(self) -> Iterable[DependencyGroup]:
