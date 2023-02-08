@@ -159,7 +159,7 @@ class UpCommand(InstallerCommand):
 
         constraint = dependency.pretty_constraint
         if not latest:
-            if constraint[0].isdigit():
+            if is_pinned(constraint):
                 # pinned
                 return False
             if constraint[0] == "*":
@@ -182,7 +182,7 @@ class UpCommand(InstallerCommand):
                 return False
 
         if not pinned:
-            if constraint[0].isdigit():
+            if is_pinned(constraint):
                 # pinned
                 return False
 
@@ -218,3 +218,8 @@ class UpCommand(InstallerCommand):
                 section[dependency.pretty_name] = new_version
             elif "version" in section.get(dependency.pretty_name, {}):
                 section[dependency.pretty_name]["version"] = new_version
+
+
+def is_pinned(version: str) -> bool:
+    """Returns if `version` is an exact version."""
+    return version[0].isdigit() or version[:2] == "=="
