@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.2](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.2.1...0.2.2) (2023-02-10)
+
+
+### 🐛 Bug Fixes
+
+* get rid of flake8 additional packages ([7ffdd5a](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/7ffdd5ab33b80248875c845ae5b41aa9addfef82))
+* support `==` as pinned ([4f6d119](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/4f6d1191cef19d22e47ae2571c3e788b331c5901))
+* throw error on pinned without latest ([95aaeac](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/95aaeaca0a7d3638916da8bb3048c1dd2a1cabd5))
+
 ## [0.2.1](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.2.0...0.2.1) (2022-12-19)
 
 
