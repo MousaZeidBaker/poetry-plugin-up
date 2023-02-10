@@ -1,6 +1,7 @@
 from poetry.core.packages.dependency import Dependency
 from tomlkit import parse
 
+from src.poetry_plugin_up.command import is_pinned
 from tests.helpers import TestUpCommand
 
 
@@ -385,6 +386,30 @@ def test_is_bumpable_is_true_when_version_pinned_and_latest_and_pinned(
         pinned=True,
     )
     assert is_bumpable is True
+
+
+def test_is_pinned() -> None:
+    assert is_pinned("1.1.1")
+    assert is_pinned("==1.1.1")
+    assert not is_pinned("^1.1.1")
+    assert not is_pinned(">=1.1.1")
+    assert not is_pinned("~1.1.1")
+
+
+def test_is_bumpable_is_false_when_version_pinned_with_with_equals_and_latest(
+    up_cmd_tester: TestUpCommand,
+) -> None:
+    dependency = Dependency(
+        name="foo",
+        constraint="==1.2.3",
+    )
+    is_bumpable = up_cmd_tester.is_bumpable(
+        dependency=dependency,
+        only_packages=[],
+        latest=True,
+        pinned=False,
+    )
+    assert is_bumpable is False
 
 
 def test_is_bumpable_is_true_when_version_wildcard_and_latest(
