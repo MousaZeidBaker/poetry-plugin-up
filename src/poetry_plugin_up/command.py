@@ -35,7 +35,9 @@ class UpCommand(InstallerCommand):
         option(
             long_name="pinned",
             short_name=None,
-            description="Included pinned dependencies when updating to latest.",
+            description=(
+                "Include pinned (exact) dependencies when updating to latest."
+            ),
         ),
         option(
             long_name="no-install",
@@ -57,6 +59,10 @@ class UpCommand(InstallerCommand):
         pinned = self.option("pinned")
         no_install = self.option("no-install")
         dry_run = self.option("dry-run")
+
+        if pinned and not latest:
+            self.line_error("'--pinned' specified without '--latest'")
+            raise Exception
 
         selector = VersionSelector(self.poetry.pool)
         pyproject_content = self.poetry.file.read()

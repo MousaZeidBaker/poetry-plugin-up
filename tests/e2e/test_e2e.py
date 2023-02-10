@@ -142,3 +142,7 @@ def test_command_reverts_pyproject_on_error(
     assert app_tester.execute("up") == 1
     assert PyProjectTOML(tmp_pyproject_path).file.read() == expected
     command_call.assert_called_once_with(name="update")
+
+
+def test_pinned_without_latest_fails(app_tester: ApplicationTester) -> None:
+    assert app_tester.execute("up --pinned") == 1
