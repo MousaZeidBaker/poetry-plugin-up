@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.2.2...0.3.0) (2023-02-13)
+
+
+### 🚀 Features
+
+* Preserve tilde when bumping ([b346042](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/b34604275a937faeb2a4b25b765429ecbaabef4d))
+
 ## [0.2.2](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.2.1...0.2.2) (2023-02-10)
 
 
