@@ -18,7 +18,7 @@ waldo = {git = "https://example.com/test/project.git"}
 [tool.poetry.group.dev.dependencies]
 fred = "1.1.1"
 plugh = "^2.2.2"
-xyzzy = "^2.2.2"
+xyzzy = "~2.2.2"
 nacho = "^2.2.2"
 thud = "^2.2.2"
 
