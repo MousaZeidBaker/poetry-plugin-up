@@ -47,13 +47,13 @@ The plugin provides an `up` command to update dependencies
 poetry up --help
 ```
 
-Update dependencies
+Update dependencies to latest available compatible versions
 
 ```shell
 poetry up
 ```
 
-Update dependencies to latest available compatible versions
+Update dependencies to latest available versions
 
 ```shell
 poetry up --latest
