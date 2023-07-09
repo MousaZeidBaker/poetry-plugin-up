@@ -5,9 +5,9 @@ import pytest
 from cleo.testers.application_tester import ApplicationTester
 from poetry.core.packages.dependency_group import DependencyGroup
 from poetry.core.packages.package import Package
-from poetry.core.pyproject.toml import PyProjectTOML
 from poetry.factory import Factory
 from poetry.poetry import Poetry
+from poetry.pyproject.toml import PyProjectTOML
 from pytest import TempPathFactory
 from tomlkit.toml_document import TOMLDocument
 
