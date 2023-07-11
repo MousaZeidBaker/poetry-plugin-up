@@ -1,14 +1,14 @@
+from collections.abc import Iterable
 from pathlib import Path
-from typing import List
 
 import pytest
 from cleo.testers.application_tester import ApplicationTester
 from poetry.core.packages.dependency_group import DependencyGroup
 from poetry.core.packages.package import Package
-from poetry.core.pyproject.toml import PyProjectTOML
 from poetry.factory import Factory
 from poetry.poetry import Poetry
 from pytest import TempPathFactory
+from tomlkit import parse
 from tomlkit.toml_document import TOMLDocument
 
 from tests.helpers import TestApplication, TestUpCommand
@@ -22,13 +22,13 @@ def project_path() -> Path:
 @pytest.fixture(scope="function")
 def pyproject_content(project_path: Path) -> TOMLDocument:
     path = project_path / "pyproject.toml"
-    return PyProjectTOML(path).file.read()
+    return parse(path.read_text())
 
 
 @pytest.fixture(scope="function")
 def expected_pyproject_content(project_path: Path) -> TOMLDocument:
     path = project_path / "expected_pyproject.toml"
-    return PyProjectTOML(path).file.read()
+    return parse(path.read_text())
 
 
 @pytest.fixture(scope="function")
@@ -61,12 +61,12 @@ def up_cmd_tester(poetry: Poetry) -> TestUpCommand:
 
 
 @pytest.fixture
-def groups(poetry: Poetry) -> List[DependencyGroup]:
+def groups(poetry: Poetry) -> Iterable[DependencyGroup]:
     return poetry.package._dependency_groups.values()
 
 
 @pytest.fixture
-def packages() -> List[Package]:
+def packages() -> list[Package]:
     return [
         Package(name="foo", version="2.2.2"),
         Package(name="bar", version="2.2.2"),

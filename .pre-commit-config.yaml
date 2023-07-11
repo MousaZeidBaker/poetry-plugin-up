@@ -16,17 +16,14 @@ repos:
       - id: check-yaml # https://github.com/pre-commit/pre-commit-hooks/tree/v4.3.0#check-yaml
       - id: check-toml # https://github.com/pre-commit/pre-commit-hooks/tree/v4.3.0#check-toml
   - repo: https://github.com/psf/black
-    rev: 22.10.0
+    rev: 23.7.0
     hooks:
       - id: black
-  - repo: https://github.com/pycqa/isort
-    rev: 5.11.5
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.0.277
     hooks:
-      - id: isort
-  - repo: https://github.com/pycqa/flake8
-    rev: 5.0.4
-    hooks:
-      - id: flake8
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v2.37.1
     hooks:

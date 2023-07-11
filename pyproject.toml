@@ -26,13 +26,14 @@ classifiers=[
 include = ["LICENSE"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 poetry = "^1.2.0"
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^2.20.0"
-pytest = "^7.2.0"
-pytest-mock = "^3.10.0"
+basedmypy = "~2.0.0"
+pre-commit = "^3.3.3"
+pytest = "^7.4.0"
+pytest-mock = "^3.11.1"
 
 [tool.poetry.plugins."poetry.application.plugin"]
 up = "poetry_plugin_up.plugin:UpApplicationPlugin"
@@ -44,5 +45,15 @@ build-backend = "poetry.core.masonry.api"
 [tool.black]
 line-length = 80
 
-[tool.isort]
-profile = "black"
+[tool.mypy]
+mypy_path = ["src"]
+packages = ["poetry_plugin_up", "tests"]
+explicit_package_bases = true
+allow_any_expr = true
+allow_any_decorated = true
+allow_any_unimported = true
+allow_any_explicit = true
+allow_untyped_calls = true
+
+[tool.ruff]
+extend-select = ["I", "UP"]

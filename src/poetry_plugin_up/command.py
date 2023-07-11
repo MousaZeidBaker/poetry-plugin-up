@@ -1,12 +1,13 @@
-from typing import Any, Dict, Iterable, List
+from collections.abc import Iterable
+from typing import cast
 
 from cleo.helpers import argument, option
 from poetry.console.commands.installer_command import InstallerCommand
 from poetry.core.packages.dependency import Dependency
 from poetry.core.packages.dependency_group import DependencyGroup
-from poetry.core.packages.package import Package
 from poetry.version.version_selector import VersionSelector
 from tomlkit import dumps
+from tomlkit.container import Container
 from tomlkit.toml_document import TOMLDocument
 
 
@@ -111,10 +112,10 @@ class UpCommand(InstallerCommand):
         dependency: Dependency,
         latest: bool,
         pinned: bool,
-        only_packages: List[str],
+        only_packages: list[str],
         pyproject_content: TOMLDocument,
         selector: VersionSelector,
-    ) -> None:
+    ):
         """Handles a dependency"""
 
         if not self.is_bumpable(dependency, only_packages, latest, pinned):
@@ -124,7 +125,7 @@ class UpCommand(InstallerCommand):
         if latest:
             target_package_version = "*"
 
-        candidate: Package = selector.find_best_candidate(
+        candidate = selector.find_best_candidate(
             package_name=dependency.name,
             target_package_version=target_package_version,
             allow_prereleases=dependency.allows_prereleases(),
@@ -154,7 +155,7 @@ class UpCommand(InstallerCommand):
     @staticmethod
     def is_bumpable(
         dependency: Dependency,
-        only_packages: List[str],
+        only_packages: list[str],
         latest: bool,
         pinned: bool,
     ) -> bool:
@@ -203,10 +204,12 @@ class UpCommand(InstallerCommand):
         dependency: Dependency,
         new_version: str,
         pyproject_content: TOMLDocument,
-    ) -> None:
+    ):
         """Bumps versions in pyproject content (pyproject.toml)"""
 
-        poetry_content: Dict[str, Any] = pyproject_content["tool"]["poetry"]
+        poetry_content = cast(
+            Container, cast(Container, pyproject_content["tool"])["poetry"]
+        )
 
         for group in dependency.groups:
             # find section to modify

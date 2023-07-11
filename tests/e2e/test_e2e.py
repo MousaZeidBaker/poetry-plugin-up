@@ -1,19 +1,18 @@
 from pathlib import Path
-from typing import List
 
 from cleo.testers.application_tester import ApplicationTester
 from poetry.core.packages.package import Package
-from poetry.core.pyproject.toml import PyProjectTOML
 from pytest_mock import MockerFixture
+from tomlkit import parse
 
 
 def test_command(
     app_tester: ApplicationTester,
-    packages: List[Package],
+    packages: list[Package],
     mocker: MockerFixture,
     project_path: Path,
     tmp_pyproject_path: Path,
-) -> None:
+):
     command_call = mocker.patch(
         "poetry.console.commands.command.Command.call",
         return_value=0,
@@ -28,20 +27,20 @@ def test_command(
     )
 
     path = project_path / "expected_pyproject.toml"
-    expected = PyProjectTOML(path).file.read()
+    expected = parse(path.read_text())
 
     assert app_tester.execute("up") == 0
-    assert PyProjectTOML(tmp_pyproject_path).file.read() == expected
+    assert parse(tmp_pyproject_path.read_text()) == expected
     command_call.assert_called_once_with(name="update")
 
 
 def test_command_with_latest(
     app_tester: ApplicationTester,
-    packages: List[Package],
+    packages: list[Package],
     mocker: MockerFixture,
     project_path: Path,
     tmp_pyproject_path: Path,
-) -> None:
+):
     command_call = mocker.patch(
         "poetry.console.commands.command.Command.call",
         return_value=0,
@@ -56,19 +55,19 @@ def test_command_with_latest(
     )
 
     path = project_path / "expected_pyproject_with_latest.toml"
-    expected = PyProjectTOML(path).file.read()
+    expected = parse(path.read_text())
 
     assert app_tester.execute("up --latest") == 0
-    assert PyProjectTOML(tmp_pyproject_path).file.read() == expected
+    assert parse(tmp_pyproject_path.read_text()) == expected
     command_call.assert_called_once_with(name="update")
 
 
 def test_command_with_dry_run(
     app_tester: ApplicationTester,
-    packages: List[Package],
+    packages: list[Package],
     mocker: MockerFixture,
     tmp_pyproject_path: Path,
-) -> None:
+):
     command_call = mocker.patch(
         "poetry.console.commands.command.Command.call",
         return_value=0,
@@ -82,21 +81,21 @@ def test_command_with_dry_run(
         return_value=None,
     )
 
-    expected = PyProjectTOML(tmp_pyproject_path).file.read()
+    expected = parse(tmp_pyproject_path.read_text())
 
     assert app_tester.execute("up --dry-run") == 0
     # assert pyproject.toml file not modified
-    assert PyProjectTOML(tmp_pyproject_path).file.read() == expected
+    assert parse(tmp_pyproject_path.read_text()) == expected
     command_call.assert_not_called()
 
 
 def test_command_with_no_install(
     app_tester: ApplicationTester,
-    packages: List[Package],
+    packages: list[Package],
     mocker: MockerFixture,
     project_path: Path,
     tmp_pyproject_path: Path,
-) -> None:
+):
     command_call = mocker.patch(
         "poetry.console.commands.command.Command.call",
         return_value=0,
@@ -111,19 +110,19 @@ def test_command_with_no_install(
     )
 
     path = project_path / "expected_pyproject.toml"
-    expected = PyProjectTOML(path).file.read()
+    expected = parse(path.read_text())
 
     assert app_tester.execute("up --no-install") == 0
-    assert PyProjectTOML(tmp_pyproject_path).file.read() == expected
+    assert parse(tmp_pyproject_path.read_text()) == expected
     command_call.assert_called_once_with(name="lock", args="--no-update")
 
 
 def test_command_reverts_pyproject_on_error(
     app_tester: ApplicationTester,
-    packages: List[Package],
+    packages: list[Package],
     mocker: MockerFixture,
     tmp_pyproject_path: Path,
-) -> None:
+):
     command_call = mocker.patch(
         "poetry.console.commands.command.Command.call",
         side_effect=Exception,
@@ -137,12 +136,12 @@ def test_command_reverts_pyproject_on_error(
         return_value=None,
     )
 
-    expected = PyProjectTOML(tmp_pyproject_path).file.read()
+    expected = parse(tmp_pyproject_path.read_text())
 
     assert app_tester.execute("up") == 1
-    assert PyProjectTOML(tmp_pyproject_path).file.read() == expected
+    assert parse(tmp_pyproject_path.read_text()) == expected
     command_call.assert_called_once_with(name="update")
 
 
-def test_pinned_without_latest_fails(app_tester: ApplicationTester) -> None:
+def test_pinned_without_latest_fails(app_tester: ApplicationTester):
     assert app_tester.execute("up --pinned") == 1

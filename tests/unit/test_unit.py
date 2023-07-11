@@ -1,14 +1,15 @@
+from typing import Any
+
 from poetry.core.packages.dependency import Dependency
+from poetry_plugin_up.command import is_pinned
 from tomlkit import parse
 
-from src.poetry_plugin_up.command import is_pinned
 from tests.helpers import TestUpCommand
 
 
 def test_bump_version_in_pyproject_content(
     up_cmd_tester: TestUpCommand,
-) -> None:
-
+):
     dependencies = [
         Dependency(
             name="foo",
@@ -28,7 +29,7 @@ def test_bump_version_in_pyproject_content(
         ),
     ]
 
-    content = parse(
+    content: Any = parse(
         """
         [tool.poetry.dependencies]
         python = "^3.7"
@@ -56,8 +57,7 @@ def test_bump_version_in_pyproject_content(
 
 def test_bump_version_in_pyproject_content_with_old_dev_dependencies(
     up_cmd_tester: TestUpCommand,
-) -> None:
-
+):
     dependencies = [
         Dependency(
             name="foo",
@@ -77,7 +77,7 @@ def test_bump_version_in_pyproject_content_with_old_dev_dependencies(
         ),
     ]
 
-    content = parse(
+    content: Any = parse(
         """
         [tool.poetry.dependencies]
         python = "^3.7"
@@ -105,7 +105,7 @@ def test_bump_version_in_pyproject_content_with_old_dev_dependencies(
 
 def test_is_bumpable_is_false_when_source_type_is_git(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="*",
@@ -122,7 +122,7 @@ def test_is_bumpable_is_false_when_source_type_is_git(
 
 def test_is_bumpable_is_false_when_source_type_is_file(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="*",
@@ -139,7 +139,7 @@ def test_is_bumpable_is_false_when_source_type_is_file(
 
 def test_is_bumpable_is_false_when_source_type_is_directory(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="*",
@@ -156,7 +156,7 @@ def test_is_bumpable_is_false_when_source_type_is_directory(
 
 def test_is_bumpable_is_false_when_name_is_python(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(name="python", constraint="^1.2.3")
     is_bumpable = up_cmd_tester.is_bumpable(
         dependency=dependency,
@@ -169,7 +169,7 @@ def test_is_bumpable_is_false_when_name_is_python(
 
 def test_is_bumpable_is_false_when_dependency_not_in_only_packages(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(name="foo", constraint="^1.2.3")
     is_bumpable = up_cmd_tester.is_bumpable(
         dependency=dependency,
@@ -182,7 +182,7 @@ def test_is_bumpable_is_false_when_dependency_not_in_only_packages(
 
 def test_is_bumpable_is_false_when_version_pinned(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="1.2.3",
@@ -198,7 +198,7 @@ def test_is_bumpable_is_false_when_version_pinned(
 
 def test_is_bumpable_is_false_when_version_wildcard(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="*",
@@ -214,7 +214,7 @@ def test_is_bumpable_is_false_when_version_wildcard(
 
 def test_is_bumpable_is_false_when_version_less_than(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="<1.2.3",
@@ -230,7 +230,7 @@ def test_is_bumpable_is_false_when_version_less_than(
 
 def test_is_bumpable_is_false_when_version_greater_than(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint=">1.2.3",
@@ -246,7 +246,7 @@ def test_is_bumpable_is_false_when_version_greater_than(
 
 def test_is_bumpable_is_false_when_version_less_than_or_equal(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="<=1.2.3",
@@ -262,7 +262,7 @@ def test_is_bumpable_is_false_when_version_less_than_or_equal(
 
 def test_is_bumpable_is_false_when_version_inequality(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="!=1.2.3",
@@ -278,7 +278,7 @@ def test_is_bumpable_is_false_when_version_inequality(
 
 def test_is_bumpable_is_false_when_version_multiple_requirements(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint=">=1.2.3, <2.0.0",
@@ -294,7 +294,7 @@ def test_is_bumpable_is_false_when_version_multiple_requirements(
 
 def test_is_bumpable_is_true_when_version_caret(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="^1.2.3",
@@ -310,7 +310,7 @@ def test_is_bumpable_is_true_when_version_caret(
 
 def test_is_bumpable_is_true_when_version_tilde(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="~1.2.3",
@@ -326,7 +326,7 @@ def test_is_bumpable_is_true_when_version_tilde(
 
 def test_is_bumpable_is_true_when_version_greater_than_or_equal(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint=">=1.2.3",
@@ -342,7 +342,7 @@ def test_is_bumpable_is_true_when_version_greater_than_or_equal(
 
 def test_is_bumpable_is_true_when_version_tilde_pep440(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="~=1.2.3",
@@ -358,7 +358,7 @@ def test_is_bumpable_is_true_when_version_tilde_pep440(
 
 def test_is_bumpable_is_false_when_version_pinned_and_latest(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="1.2.3",
@@ -374,7 +374,7 @@ def test_is_bumpable_is_false_when_version_pinned_and_latest(
 
 def test_is_bumpable_is_true_when_version_pinned_and_latest_and_pinned(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="1.2.3",
@@ -388,7 +388,7 @@ def test_is_bumpable_is_true_when_version_pinned_and_latest_and_pinned(
     assert is_bumpable is True
 
 
-def test_is_pinned() -> None:
+def test_is_pinned():
     assert is_pinned("1.1.1")
     assert is_pinned("==1.1.1")
     assert not is_pinned("^1.1.1")
@@ -398,7 +398,7 @@ def test_is_pinned() -> None:
 
 def test_is_bumpable_is_false_when_version_pinned_with_with_equals_and_latest(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="==1.2.3",
@@ -414,7 +414,7 @@ def test_is_bumpable_is_false_when_version_pinned_with_with_equals_and_latest(
 
 def test_is_bumpable_is_true_when_version_wildcard_and_latest(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="*",
@@ -430,7 +430,7 @@ def test_is_bumpable_is_true_when_version_wildcard_and_latest(
 
 def test_is_bumpable_is_true_when_version_less_than_and_latest(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="<1.2.3",
@@ -446,7 +446,7 @@ def test_is_bumpable_is_true_when_version_less_than_and_latest(
 
 def test_is_bumpable_is_true_when_version_greater_than_and_latest(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint=">1.2.3",
@@ -462,7 +462,7 @@ def test_is_bumpable_is_true_when_version_greater_than_and_latest(
 
 def test_is_bumpable_is_true_when_version_less_than_or_equal_and_latest(
     up_cmd_tester: TestUpCommand,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="<=1.2.3",

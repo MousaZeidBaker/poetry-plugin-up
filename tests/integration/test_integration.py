@@ -11,7 +11,7 @@ from tests.helpers import TestUpCommand
 def test_handle_dependency(
     up_cmd_tester: TestUpCommand,
     mocker: MockerFixture,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="^1.0",
@@ -57,7 +57,7 @@ def test_handle_dependency(
 def test_handle_dependency_with_latest(
     up_cmd_tester: TestUpCommand,
     mocker: MockerFixture,
-) -> None:
+):
     dependency = Dependency(
         name="foo",
         constraint="^1.0",
