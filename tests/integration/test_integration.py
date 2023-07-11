@@ -98,3 +98,45 @@ def test_handle_dependency_with_latest(
         new_version=f"^{new_version}",
         pyproject_content=content,
     )
+
+
+def test_handle_dependency_with_zero_caret(
+    up_cmd_tester: TestUpCommand,
+    mocker: MockerFixture,
+) -> None:
+    dependency = Dependency(
+        name="foo",
+        constraint="^0",
+        groups=["main"],
+    )
+    new_version = "0.1"
+    package = Package(
+        name=dependency.name,
+        version=new_version,
+    )
+
+    content = parse("")
+
+    selector = Mock()
+    selector.find_best_candidate = Mock(return_value=package)
+    bump_version_in_pyproject_content = mocker.patch(
+        "poetry_plugin_up.command.UpCommand.bump_version_in_pyproject_content",
+        return_value=None,
+    )
+
+    up_cmd_tester.handle_dependency(
+        dependency=dependency,
+        latest=True,
+        pinned=False,
+        only_packages=[],
+        pyproject_content=content,
+        selector=selector,
+    )
+
+    selector.find_best_candidate.assert_called_once_with(
+        package_name=dependency.name,
+        target_package_version="*",
+        allow_prereleases=dependency.allows_prereleases(),
+        source=dependency.source_name,
+    )
+    bump_version_in_pyproject_content.assert_not_called()
