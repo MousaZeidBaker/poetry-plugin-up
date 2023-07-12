@@ -3,7 +3,7 @@ from typing import List
 
 from cleo.testers.application_tester import ApplicationTester
 from poetry.core.packages.package import Package
-from poetry.core.pyproject.toml import PyProjectTOML
+from poetry.pyproject.toml import PyProjectTOML
 from pytest_mock import MockerFixture
 
 
