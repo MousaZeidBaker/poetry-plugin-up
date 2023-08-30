@@ -1,3 +1,4 @@
+import re
 from typing import Any, Dict, Iterable, List
 
 from cleo.helpers import argument, option
@@ -132,6 +133,11 @@ class UpCommand(InstallerCommand):
         )
         if candidate is None:
             self.line(f"No new version for '{dependency.name}'")
+            return
+
+        # preserve zero based carets ('^0.0') when bumping
+        version = re.match(r"\^([0.]+)", dependency.pretty_constraint)
+        if version and candidate.pretty_version.startswith(version[1]):
             return
 
         if (
