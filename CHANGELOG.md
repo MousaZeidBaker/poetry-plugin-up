@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.3.0...0.4.0) (2023-08-30)
+
+
+### 🚀 Features
+
+* Preserve zero based caret ([8a5d3cb](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/8a5d3cb6a4f122537e7e66faf52c1672d8773abc))
+
 ## [0.3.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.2.2...0.3.0) (2023-02-13)
 
 
