@@ -474,3 +474,20 @@ def test_is_bumpable_is_true_when_version_less_than_or_equal_and_latest(
         pinned=False,
     )
     assert is_bumpable is True
+
+
+def test_is_bumpable_is_false_when_dependency_in_excluded_names(
+    up_cmd_tester: TestUpCommand,
+) -> None:
+    dependency = Dependency(
+        name="foo",
+        constraint="<=1.2.3",
+    )
+    is_bumpable = up_cmd_tester.is_bumpable(
+        dependency=dependency,
+        only_packages=[],
+        latest=True,
+        pinned=False,
+        exclude_names=["foo"],
+    )
+    assert is_bumpable is False

@@ -140,3 +140,41 @@ def test_handle_dependency_with_zero_caret(
         source=dependency.source_name,
     )
     bump_version_in_pyproject_content.assert_not_called()
+
+
+def test_handle_dependency_excluded(
+    up_cmd_tester: TestUpCommand,
+    mocker: MockerFixture,
+) -> None:
+    dependency = Dependency(
+        name="foo",
+        constraint="^1.0",
+        groups=["main"],
+    )
+    new_version = "2.0.0"
+    package = Package(
+        name=dependency.name,
+        version=new_version,
+    )
+
+    content = parse("")
+
+    selector = Mock()
+    selector.find_best_candidate = Mock(return_value=package)
+    bump_version_in_pyproject_content = mocker.patch(
+        "poetry_plugin_up.command.UpCommand.bump_version_in_pyproject_content",
+        return_value=None,
+    )
+
+    up_cmd_tester.handle_dependency(
+        dependency=dependency,
+        latest=False,
+        pinned=False,
+        only_packages=[],
+        pyproject_content=content,
+        selector=selector,
+        exclude_names=["foo"],
+    )
+
+    selector.find_best_candidate.assert_not_called()
+    bump_version_in_pyproject_content.assert_not_called()
