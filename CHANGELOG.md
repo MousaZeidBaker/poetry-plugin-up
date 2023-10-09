@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.4.0...0.5.0) (2023-10-09)
+
+
+### 🚀 Features
+
+* Add new option --exclude ([c6bd601](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/c6bd601fc85410e06c12b98651d2037a97c15fae))
+
+
+### 🐛 Bug Fixes
+
+* rename method argument ([ff59b3d](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/ff59b3dcd2f7c53b093a2a5ce6d05b79f0ad006a))
+
 ## [0.4.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.3.0...0.4.0) (2023-08-30)
 
 
