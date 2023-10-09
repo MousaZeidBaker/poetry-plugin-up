@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.5.0...0.6.0) (2023-10-09)
+
+
+### 🚀 Features
+
+* drop support for python 3.7 ([8e70a5d](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/8e70a5d9a2fa49309e863e1a18e0e4bd45c24a10))
+
+
+### 🐛 Bug Fixes
+
+* update README ([7e51a63](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/7e51a6335cb8038a4d148893ef0b1ebe63376e9c))
+
 ## [0.5.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.4.0...0.5.0) (2023-10-09)
 
 
