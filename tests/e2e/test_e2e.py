@@ -146,3 +146,34 @@ def test_command_reverts_pyproject_on_error(
 
 def test_pinned_without_latest_fails(app_tester: ApplicationTester) -> None:
     assert app_tester.execute("up --pinned") == 1
+
+
+def test_command_with_exclude(
+    app_tester: ApplicationTester,
+    packages: List[Package],
+    mocker: MockerFixture,
+    project_path: Path,
+    tmp_pyproject_path: Path,
+) -> None:
+    command_call = mocker.patch(
+        "poetry.console.commands.command.Command.call",
+        return_value=0,
+    )
+    mocker.patch(
+        "poetry.version.version_selector.VersionSelector.find_best_candidate",
+        side_effect=packages,
+    )
+    mocker.patch(
+        "poetry.console.commands.installer_command.InstallerCommand.reset_poetry",  # noqa: E501
+        return_value=None,
+    )
+
+    path = project_path / "expected_pyproject_with_exclude.toml"
+    expected = PyProjectTOML(path).file.read()
+
+    assert (
+        app_tester.execute("up --exclude foo --exclude bar --exclude=grault")
+        == 0
+    )
+    assert PyProjectTOML(tmp_pyproject_path).file.read() == expected
+    command_call.assert_called_once_with(name="update")

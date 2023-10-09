@@ -41,6 +41,13 @@ class UpCommand(InstallerCommand):
             ),
         ),
         option(
+            long_name="exclude",
+            short_name=None,
+            description="Exclude dependencies.",
+            multiple=True,
+            flag=False,
+        ),
+        option(
             long_name="no-install",
             short_name=None,
             description="Do not install dependencies, only refresh "
@@ -60,6 +67,7 @@ class UpCommand(InstallerCommand):
         pinned = self.option("pinned")
         no_install = self.option("no-install")
         dry_run = self.option("dry-run")
+        exclude = self.option("exclude")
 
         if pinned and not latest:
             self.line_error("'--pinned' specified without '--latest'")
@@ -78,6 +86,7 @@ class UpCommand(InstallerCommand):
                     only_packages=only_packages,
                     pyproject_content=pyproject_content,
                     selector=selector,
+                    exclude=exclude,
                 )
 
         if dry_run:
@@ -115,10 +124,17 @@ class UpCommand(InstallerCommand):
         only_packages: List[str],
         pyproject_content: TOMLDocument,
         selector: VersionSelector,
+        exclude: List[str],
     ) -> None:
         """Handles a dependency"""
 
-        if not self.is_bumpable(dependency, only_packages, latest, pinned):
+        if not self.is_bumpable(
+            dependency,
+            only_packages,
+            latest,
+            pinned,
+            exclude,
+        ):
             return
 
         target_package_version = dependency.pretty_constraint
@@ -163,6 +179,7 @@ class UpCommand(InstallerCommand):
         only_packages: List[str],
         latest: bool,
         pinned: bool,
+        exclude: List[str],
     ) -> bool:
         """Determines if a dependency can be bumped in pyproject.toml"""
 
@@ -171,6 +188,8 @@ class UpCommand(InstallerCommand):
         if dependency.name in ["python"]:
             return False
         if only_packages and dependency.name not in only_packages:
+            return False
+        if dependency.name in exclude:
             return False
 
         constraint = dependency.pretty_constraint
