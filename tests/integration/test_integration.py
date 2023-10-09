@@ -40,6 +40,7 @@ def test_handle_dependency(
         exclude=[],
         pyproject_content=content,
         selector=selector,
+        preserve_wildcard=False,
     )
 
     selector.find_best_candidate.assert_called_once_with(
@@ -87,6 +88,7 @@ def test_handle_dependency_with_latest(
         exclude=[],
         pyproject_content=content,
         selector=selector,
+        preserve_wildcard=False,
     )
 
     selector.find_best_candidate.assert_called_once_with(
@@ -134,6 +136,7 @@ def test_handle_dependency_with_zero_caret(
         exclude=[],
         pyproject_content=content,
         selector=selector,
+        preserve_wildcard=False,
     )
 
     selector.find_best_candidate.assert_called_once_with(
@@ -177,6 +180,46 @@ def test_handle_dependency_excluded(
         exclude=["foo"],
         pyproject_content=content,
         selector=selector,
+        preserve_wildcard=False,
+    )
+
+    selector.find_best_candidate.assert_not_called()
+    bump_version_in_pyproject_content.assert_not_called()
+
+
+def test_handle_dependency_preserve_wildcard(
+    up_cmd_tester: TestUpCommand,
+    mocker: MockerFixture,
+) -> None:
+    dependency = Dependency(
+        name="foo",
+        constraint="*",
+        groups=["main"],
+    )
+    new_version = "2.0.0"
+    package = Package(
+        name=dependency.name,
+        version=new_version,
+    )
+
+    content = parse("")
+
+    selector = Mock()
+    selector.find_best_candidate = Mock(return_value=package)
+    bump_version_in_pyproject_content = mocker.patch(
+        "poetry_plugin_up.command.UpCommand.bump_version_in_pyproject_content",
+        return_value=None,
+    )
+
+    up_cmd_tester.handle_dependency(
+        dependency=dependency,
+        latest=True,
+        pinned=False,
+        only_packages=[],
+        exclude=[],
+        pyproject_content=content,
+        selector=selector,
+        preserve_wildcard=True,
     )
 
     selector.find_best_candidate.assert_not_called()
