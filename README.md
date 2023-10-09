@@ -3,8 +3,8 @@
 ![release](https://github.com/MousaZeidBaker/poetry-plugin-up/actions/workflows/release.yaml/badge.svg)
 ![test](https://github.com/MousaZeidBaker/poetry-plugin-up/actions/workflows/test.yaml/badge.svg)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
-![python_version](https://img.shields.io/badge/Python-%3E=3.7-blue)
-![poetry_version](https://img.shields.io/badge/Poetry-%3E=1.2-blue)
+![python_version](https://img.shields.io/badge/Python-%3E=3.8-blue)
+![poetry_version](https://img.shields.io/badge/Poetry-%3E=1.6-blue)
 
 This package is a plugin that updates dependencies and bumps their versions in
 `pyproject.toml` file. The version constraints are respected, unless the
