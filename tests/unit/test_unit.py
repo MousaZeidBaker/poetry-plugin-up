@@ -116,6 +116,7 @@ def test_is_bumpable_is_false_when_source_type_is_git(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -133,6 +134,7 @@ def test_is_bumpable_is_false_when_source_type_is_file(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -150,6 +152,7 @@ def test_is_bumpable_is_false_when_source_type_is_directory(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -163,6 +166,7 @@ def test_is_bumpable_is_false_when_name_is_python(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -176,6 +180,7 @@ def test_is_bumpable_is_false_when_dependency_not_in_only_packages(
         only_packages=["bar"],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -192,6 +197,7 @@ def test_is_bumpable_is_false_when_version_pinned(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -208,6 +214,7 @@ def test_is_bumpable_is_false_when_version_wildcard(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -224,6 +231,7 @@ def test_is_bumpable_is_false_when_version_less_than(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -240,6 +248,7 @@ def test_is_bumpable_is_false_when_version_greater_than(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -256,6 +265,7 @@ def test_is_bumpable_is_false_when_version_less_than_or_equal(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -272,6 +282,7 @@ def test_is_bumpable_is_false_when_version_inequality(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -288,6 +299,7 @@ def test_is_bumpable_is_false_when_version_multiple_requirements(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -304,6 +316,7 @@ def test_is_bumpable_is_true_when_version_caret(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is True
 
@@ -320,6 +333,7 @@ def test_is_bumpable_is_true_when_version_tilde(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is True
 
@@ -336,6 +350,7 @@ def test_is_bumpable_is_true_when_version_greater_than_or_equal(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is True
 
@@ -352,6 +367,7 @@ def test_is_bumpable_is_true_when_version_tilde_pep440(
         only_packages=[],
         latest=False,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is True
 
@@ -368,6 +384,7 @@ def test_is_bumpable_is_false_when_version_pinned_and_latest(
         only_packages=[],
         latest=True,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -384,6 +401,7 @@ def test_is_bumpable_is_true_when_version_pinned_and_latest_and_pinned(
         only_packages=[],
         latest=True,
         pinned=True,
+        exclude=[],
     )
     assert is_bumpable is True
 
@@ -408,6 +426,7 @@ def test_is_bumpable_is_false_when_version_pinned_with_with_equals_and_latest(
         only_packages=[],
         latest=True,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is False
 
@@ -424,6 +443,7 @@ def test_is_bumpable_is_true_when_version_wildcard_and_latest(
         only_packages=[],
         latest=True,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is True
 
@@ -440,6 +460,7 @@ def test_is_bumpable_is_true_when_version_less_than_and_latest(
         only_packages=[],
         latest=True,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is True
 
@@ -456,6 +477,7 @@ def test_is_bumpable_is_true_when_version_greater_than_and_latest(
         only_packages=[],
         latest=True,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is True
 
@@ -472,11 +494,12 @@ def test_is_bumpable_is_true_when_version_less_than_or_equal_and_latest(
         only_packages=[],
         latest=True,
         pinned=False,
+        exclude=[],
     )
     assert is_bumpable is True
 
 
-def test_is_bumpable_is_false_when_dependency_in_excluded_names(
+def test_is_bumpable_is_false_when_dependency_excluded(
     up_cmd_tester: TestUpCommand,
 ) -> None:
     dependency = Dependency(
@@ -488,6 +511,6 @@ def test_is_bumpable_is_false_when_dependency_in_excluded_names(
         only_packages=[],
         latest=True,
         pinned=False,
-        exclude_names=["foo"],
+        exclude=["foo"],
     )
     assert is_bumpable is False

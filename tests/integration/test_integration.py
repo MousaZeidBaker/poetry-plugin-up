@@ -37,6 +37,7 @@ def test_handle_dependency(
         latest=False,
         pinned=False,
         only_packages=[],
+        exclude=[],
         pyproject_content=content,
         selector=selector,
     )
@@ -83,6 +84,7 @@ def test_handle_dependency_with_latest(
         latest=True,
         pinned=True,
         only_packages=[],
+        exclude=[],
         pyproject_content=content,
         selector=selector,
     )
@@ -129,6 +131,7 @@ def test_handle_dependency_with_zero_caret(
         latest=True,
         pinned=False,
         only_packages=[],
+        exclude=[],
         pyproject_content=content,
         selector=selector,
     )
@@ -171,9 +174,9 @@ def test_handle_dependency_excluded(
         latest=False,
         pinned=False,
         only_packages=[],
+        exclude=["foo"],
         pyproject_content=content,
         selector=selector,
-        exclude_names=["foo"],
     )
 
     selector.find_best_candidate.assert_not_called()

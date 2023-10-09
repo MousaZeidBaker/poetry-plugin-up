@@ -148,7 +148,7 @@ def test_pinned_without_latest_fails(app_tester: ApplicationTester) -> None:
     assert app_tester.execute("up --pinned") == 1
 
 
-def test_command_with_excluded_names(
+def test_command_with_exclude(
     app_tester: ApplicationTester,
     packages: List[Package],
     mocker: MockerFixture,
@@ -168,13 +168,11 @@ def test_command_with_excluded_names(
         return_value=None,
     )
 
-    path = project_path / "expected_pyproject_with_excluded_name.toml"
+    path = project_path / "expected_pyproject_with_exclude.toml"
     expected = PyProjectTOML(path).file.read()
 
     assert (
-        app_tester.execute(
-            "up --exclude-name foo --exclude-name bar --exclude-name=grault"
-        )
+        app_tester.execute("up --exclude foo --exclude bar --exclude=grault")
         == 0
     )
     assert PyProjectTOML(tmp_pyproject_path).file.read() == expected
