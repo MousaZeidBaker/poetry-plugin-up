@@ -161,11 +161,10 @@ class UpCommand(InstallerCommand):
             and "." in dependency.pretty_constraint
         ):
             new_version = "~" + candidate.pretty_version
+        elif dependency.pretty_constraint[:2] == ">=":
+            new_version = ">=" + candidate.pretty_version
         else:
             new_version = "^" + candidate.pretty_version
-        if not latest:
-            if dependency.pretty_constraint[:2] == ">=":
-                new_version = ">=" + candidate.pretty_version
 
         self.bump_version_in_pyproject_content(
             dependency=dependency,
