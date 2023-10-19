@@ -177,3 +177,40 @@ def test_command_with_exclude(
     )
     assert PyProjectTOML(tmp_pyproject_path).file.read() == expected
     command_call.assert_called_once_with(name="update")
+
+
+def test_command_preserve_wildcard(
+    app_tester: ApplicationTester,
+    packages: List[Package],
+    mocker: MockerFixture,
+    project_path: Path,
+    tmp_pyproject_path: Path,
+) -> None:
+    command_call = mocker.patch(
+        "poetry.console.commands.command.Command.call",
+        return_value=0,
+    )
+    mocker.patch(
+        "poetry.version.version_selector.VersionSelector.find_best_candidate",
+        side_effect=packages,
+    )
+    mocker.patch(
+        "poetry.console.commands.installer_command.InstallerCommand.reset_poetry",  # noqa: E501
+        return_value=None,
+    )
+
+    path = (
+        project_path
+        / "expected_pyproject_with_latest_and_preserve_wildcard.toml"
+    )
+    expected = PyProjectTOML(path).file.read()
+
+    assert app_tester.execute("up --latest --preserve-wildcard") == 0
+    assert PyProjectTOML(tmp_pyproject_path).file.read() == expected
+    command_call.assert_called_once_with(name="update")
+
+
+def test_preserve_wildcard_without_latest_fails(
+    app_tester: ApplicationTester,
+) -> None:
+    assert app_tester.execute("up --preserve-wildcard") == 1
