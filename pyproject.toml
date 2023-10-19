@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "poetry-plugin-up"
-version = "0.6.0"
+version = "0.7.0"
 description = "Poetry plugin that updates dependencies and bumps their versions in pyproject.toml file"
 authors = ["Mousa Zeid Baker"]
 packages = [
