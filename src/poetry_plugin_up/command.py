@@ -59,6 +59,12 @@ class UpCommand(InstallerCommand):
             description="Output bumped <comment>pyproject.toml</> but do not "
             "execute anything.",
         ),
+        option(
+            long_name="preserve-wildcard",
+            short_name=None,
+            description="Do not bump wildcard dependencies "
+            "when updating to latest.",
+        ),
     ]
 
     def handle(self) -> int:
@@ -68,9 +74,16 @@ class UpCommand(InstallerCommand):
         no_install = self.option("no-install")
         dry_run = self.option("dry-run")
         exclude = self.option("exclude")
+        preserve_wildcard = self.option("preserve-wildcard")
 
         if pinned and not latest:
             self.line_error("'--pinned' specified without '--latest'")
+            raise Exception
+
+        if preserve_wildcard and not latest:
+            self.line_error(
+                "'--preserve-wildcard' specified without '--latest'"
+            )
             raise Exception
 
         selector = VersionSelector(self.poetry.pool)
@@ -87,6 +100,7 @@ class UpCommand(InstallerCommand):
                     pyproject_content=pyproject_content,
                     selector=selector,
                     exclude=exclude,
+                    preserve_wildcard=preserve_wildcard,
                 )
 
         if dry_run:
@@ -125,6 +139,7 @@ class UpCommand(InstallerCommand):
         pyproject_content: TOMLDocument,
         selector: VersionSelector,
         exclude: List[str],
+        preserve_wildcard: bool,
     ) -> None:
         """Handles a dependency"""
 
@@ -134,6 +149,7 @@ class UpCommand(InstallerCommand):
             latest,
             pinned,
             exclude,
+            preserve_wildcard,
         ):
             return
 
@@ -179,6 +195,7 @@ class UpCommand(InstallerCommand):
         latest: bool,
         pinned: bool,
         exclude: List[str],
+        preserve_wildcard: bool,
     ) -> bool:
         """Determines if a dependency can be bumped in pyproject.toml"""
 
@@ -192,6 +209,9 @@ class UpCommand(InstallerCommand):
             return False
 
         constraint = dependency.pretty_constraint
+        if preserve_wildcard and constraint == "*":
+            return False
+
         if not latest:
             if is_pinned(constraint):
                 # pinned

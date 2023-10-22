@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.6.0...0.7.0) (2023-10-19)
+
+
+### 🚀 Features
+
+* add --preserve-wildcard ([ca9fcdf](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/ca9fcdf201e7c219e4cd872e004128dceaf0a71a))
+
 ## [0.6.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.5.0...0.6.0) (2023-10-09)
 
 
