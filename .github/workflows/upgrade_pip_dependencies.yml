@@ -1,0 +1,71 @@
+name: Upgrade pip dependencies
+
+on:
+  schedule:
+    # every Monday at 05:05AM
+    - cron: "5 5 * * 1"
+
+  workflow_dispatch:
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.6.0
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Upgrade dependencies
+        run: |
+          source $(poetry env info --path)/bin/activate
+          poetry up
+
+      - name: create pull request body
+        id: pr-body
+        run: |
+          diff_str=$(git diff poetry.lock || echo "")
+
+          pr_body=$(echo "$diff_str" | grep -E "name\s*=\s*\"" | sed "s/^\s*name\s*=\s*\"\([^\"]*\)\"\s*$/\* [\`\1\`](https:\/\/pypi.org\/project\/\1\)/g")
+
+          pr_body="## Upgrade pip dependencies\n\nThis **pull request** upgrades:\n\n$pr_body\n\nThe list items above have been pulled from the \`poetry.lock\` file.\n\nThe pull request will be updated by subsequent runs of the GitHub Actions workflow that generated it.\n"
+
+          echo -e "\n----------------------\nThe pull request body:\n----------------------\n"
+
+          echo -e "$pr_body"
+
+          echo 'pr_body<<EOF' >> $GITHUB_OUTPUT
+          echo -e "$pr_body" >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          add-paths: |
+            poetry.lock
+            pyproject.toml
+          commit-message: "chore(deps): upgrade pip dependencies"
+          branch: upgrade-pip-dependencies
+          delete-branch: true
+          base: master
+          title: "Upgrade pip dependencies"
+          body: ${{ steps.pr-body.outputs.pr_body }}
+          labels: |
+            dependencies
+            python
+          draft: false
