@@ -24,7 +24,7 @@ thud = "^2.2.2"
 
 [tool.poetry.group.docs.dependencies]
 foobar = "^2.2.2"
-foobaz = "^2.2.2"
+foobaz = ">=2.2.2"
 fooqux = "^2.2.2"
 fooquux = "^2.2.2"
 Foo_Corge = "^2.2.2"
