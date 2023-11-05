@@ -2,8 +2,8 @@ name: Upgrade pip dependencies
 
 on:
   schedule:
-    # every Monday at 05:05AM
-    - cron: "5 5 * * 1"
+    # first day of the month at 05:05AM
+    - cron: "5 5 1 * *"
 
   workflow_dispatch:
 
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
