@@ -23,7 +23,6 @@ classifiers=[
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-include = ["LICENSE"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
