@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.1](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.7.0...0.7.1) (2023-11-06)
+
+
+### 🐛 Bug Fixes
+
+* don't install LICENSE in the Python path ([63090ca](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/63090cad7c8eac39ea4df392843e9691d47f97a0))
+* tests ([8caf803](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/8caf803570688ce71a70666512b802427d8b6072))
+
 ## [0.7.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.6.0...0.7.0) (2023-10-19)
 
 
