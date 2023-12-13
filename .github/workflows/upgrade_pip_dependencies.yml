@@ -39,7 +39,14 @@ jobs:
         run: |
           diff_str=$(git diff poetry.lock || echo "")
 
-          pr_body=$(echo "$diff_str" | grep -E "name\s*=\s*\"" | sed "s/^\s*name\s*=\s*\"\([^\"]*\)\"\s*$/\* [\`\1\`](https:\/\/pypi.org\/project\/\1\)/g")
+          # find the names of all modified dependencies
+          pr_body=$(echo "$diff_str" | grep -E "name\s*=\s*\"")
+
+          # remove removed dependencies
+          pr_body=$(echo "$pr_body" | sed 's/^\s*\-name\s*=\s*\"\([^\"]*\)\"\s*$//g' | sed '/^$/d')
+
+          # add pypi links to new and upgraded dependencies
+          pr_body=$(echo "$pr_body" | sed "s/^\s*[\+]*name\s*=\s*\"\([^\"]*\)\"\s*$/\* [\`\1\`](https:\/\/pypi.org\/project\/\1\)/g")
 
           pr_body="## Upgrade pip dependencies\n\nThis **pull request** upgrades:\n\n$pr_body\n\nThe list items above have been pulled from the \`poetry.lock\` file.\n\nThe pull request will be updated by subsequent runs of the GitHub Actions workflow that generated it.\n"
 
