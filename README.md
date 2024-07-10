@@ -5,6 +5,8 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 ![python_version](https://img.shields.io/badge/Python-%3E=3.8-blue)
 ![poetry_version](https://img.shields.io/badge/Poetry-%3E=1.6-blue)
+[![pypi_v](https://img.shields.io/pypi/v/poetry-plugin-up)](https://pypi.org/project/poetry-plugin-up)
+[![pypi_dm](https://img.shields.io/pypi/dm/poetry-plugin-up)](https://pypi.org/project/poetry-plugin-up)
 
 This package is a plugin that updates dependencies and bumps their versions in
 `pyproject.toml` file. The version constraints are respected, unless the
