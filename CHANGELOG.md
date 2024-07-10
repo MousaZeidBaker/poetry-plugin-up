@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.7.1...v0.7.2) (2024-07-10)
+
+
+### Documentation
+
+* update README ([c2f3f1e](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/c2f3f1eb00b923b653827a18f0cc82d37308162e))
+
 ## [0.7.1](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.7.0...0.7.1) (2023-11-06)
 
 
