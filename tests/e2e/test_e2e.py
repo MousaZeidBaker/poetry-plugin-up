@@ -115,7 +115,7 @@ def test_command_with_no_install(
 
     assert app_tester.execute("up --no-install") == 0
     assert PyProjectTOML(tmp_pyproject_path).file.read() == expected
-    command_call.assert_called_once_with(name="lock", args="--no-update")
+    command_call.assert_called_once_with(name="lock")
 
 
 def test_command_reverts_pyproject_on_error(

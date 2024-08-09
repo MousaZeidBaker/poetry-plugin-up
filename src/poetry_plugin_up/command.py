@@ -114,7 +114,7 @@ class UpCommand(InstallerCommand):
         try:
             if no_install:
                 # update lock file
-                self.call(name="lock", args="--no-update")
+                self.call(name="lock")
             else:
                 # update dependencies
                 self.call(name="update")
