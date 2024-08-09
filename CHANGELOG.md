@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.3](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/v0.7.2...v0.7.3) (2024-08-09)
+
+
+### Bug Fixes
+
+* fix no-install lock file updates ([40feadf](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/40feadf7fdae8400db7e41840a231f5bdb4def95))
+
 ## [0.7.2](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/0.7.1...v0.7.2) (2024-07-10)
 
 
