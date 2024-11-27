@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.8.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/v0.7.3...v0.8.0) (2024-11-27)
+
+
+### Features
+
+* add option to exclude zero based caret dependencies ([a1527e8](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/a1527e87a0daf121ca7d7fc7a5694504f17aabb8))
+* add option to include zero based carets dependencies ([15d96a8](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/15d96a8a4f438cdf6d42d3772ceb392435649a86))
+
+
+### Bug Fixes
+
+* conflict ([bd56433](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/bd56433011d1b72d61afde1edce17b36208ca51f))
+* linting errors ([65227c8](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/65227c838e2ba99a5da506bd637ada24bfb98218))
+
+
+### Reverts
+
+* add option to include zero based carets dependencies ([f171c51](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/f171c51baba1009964eaeb23fb0c26b414c8a8fa))
+
 ## [0.7.3](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/v0.7.2...v0.7.3) (2024-08-09)
 
 
