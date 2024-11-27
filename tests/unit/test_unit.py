@@ -117,6 +117,7 @@ def test_is_bumpable_is_false_when_source_type_is_git(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -136,6 +137,7 @@ def test_is_bumpable_is_false_when_source_type_is_file(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -155,6 +157,7 @@ def test_is_bumpable_is_false_when_source_type_is_directory(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -170,6 +173,7 @@ def test_is_bumpable_is_false_when_name_is_python(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -185,6 +189,7 @@ def test_is_bumpable_is_false_when_dependency_not_in_only_packages(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -203,6 +208,7 @@ def test_is_bumpable_is_false_when_version_pinned(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -221,6 +227,7 @@ def test_is_bumpable_is_false_when_version_wildcard(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -239,6 +246,7 @@ def test_is_bumpable_is_false_when_version_less_than(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -257,6 +265,7 @@ def test_is_bumpable_is_false_when_version_greater_than(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -275,6 +284,7 @@ def test_is_bumpable_is_false_when_version_less_than_or_equal(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -293,6 +303,7 @@ def test_is_bumpable_is_false_when_version_inequality(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -311,6 +322,7 @@ def test_is_bumpable_is_false_when_version_multiple_requirements(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -329,6 +341,7 @@ def test_is_bumpable_is_true_when_version_caret(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is True
@@ -347,6 +360,7 @@ def test_is_bumpable_is_true_when_version_tilde(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is True
@@ -365,6 +379,7 @@ def test_is_bumpable_is_true_when_version_greater_than_or_equal(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is True
@@ -383,6 +398,7 @@ def test_is_bumpable_is_true_when_version_tilde_pep440(
         latest=False,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is True
@@ -401,6 +417,7 @@ def test_is_bumpable_is_false_when_version_pinned_and_latest(
         latest=True,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -419,6 +436,7 @@ def test_is_bumpable_is_true_when_version_pinned_and_latest_and_pinned(
         latest=True,
         pinned=True,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is True
@@ -445,6 +463,7 @@ def test_is_bumpable_is_false_when_version_pinned_with_with_equals_and_latest(
         latest=True,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -463,6 +482,7 @@ def test_is_bumpable_is_true_when_version_wildcard_and_latest(
         latest=True,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is True
@@ -481,6 +501,7 @@ def test_is_bumpable_is_true_when_version_less_than_and_latest(
         latest=True,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is True
@@ -499,6 +520,7 @@ def test_is_bumpable_is_true_when_version_greater_than_and_latest(
         latest=True,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is True
@@ -517,6 +539,7 @@ def test_is_bumpable_is_true_when_version_less_than_or_equal_and_latest(
         latest=True,
         pinned=False,
         exclude=[],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is True
@@ -535,6 +558,26 @@ def test_is_bumpable_is_false_when_dependency_excluded(
         latest=True,
         pinned=False,
         exclude=["foo"],
+        exclude_zero_based_caret=False,
+        preserve_wildcard=False,
+    )
+    assert is_bumpable is False
+
+
+def test_is_bumpable_is_false_when_exclude_zero_based_caret(
+    up_cmd_tester: TestUpCommand,
+) -> None:
+    dependency = Dependency(
+        name="foo",
+        constraint="^0.2.3",
+    )
+    is_bumpable = up_cmd_tester.is_bumpable(
+        dependency=dependency,
+        only_packages=[],
+        latest=True,
+        pinned=False,
+        exclude=["foo"],
+        exclude_zero_based_caret=True,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
@@ -553,6 +596,7 @@ def test_is_bumpable_is_false_when_preserve_wildcard(
         latest=True,
         pinned=False,
         exclude=["foo"],
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
     assert is_bumpable is False
