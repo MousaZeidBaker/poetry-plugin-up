@@ -41,11 +41,6 @@ class UpCommand(InstallerCommand):
             ),
         ),
         option(
-            long_name="zero-based-carets",
-            short_name=None,
-            description="Include zero based carets dependencies.",
-        ),
-        option(
             long_name="exclude",
             short_name=None,
             description="Exclude dependencies.",
@@ -76,7 +71,6 @@ class UpCommand(InstallerCommand):
         only_packages = self.argument("packages")
         latest = self.option("latest")
         pinned = self.option("pinned")
-        zero_based_carets = self.option("zero-based-carets")
         no_install = self.option("no-install")
         dry_run = self.option("dry-run")
         exclude = self.option("exclude")
@@ -102,7 +96,6 @@ class UpCommand(InstallerCommand):
                     dependency=dependency,
                     latest=latest,
                     pinned=pinned,
-                    zero_based_carets=zero_based_carets,
                     only_packages=only_packages,
                     pyproject_content=pyproject_content,
                     selector=selector,
@@ -142,7 +135,6 @@ class UpCommand(InstallerCommand):
         dependency: Dependency,
         latest: bool,
         pinned: bool,
-        zero_based_carets: bool,
         only_packages: List[str],
         pyproject_content: TOMLDocument,
         selector: VersionSelector,
@@ -177,11 +169,7 @@ class UpCommand(InstallerCommand):
 
         # preserve zero based carets ('^0.0') when bumping
         version = re.match(r"\^([0.]+)", dependency.pretty_constraint)
-        if (
-            not zero_based_carets
-            and version
-            and candidate.pretty_version.startswith(version[1])
-        ):
+        if version and candidate.pretty_version.startswith(version[1]):
             return
 
         if (
