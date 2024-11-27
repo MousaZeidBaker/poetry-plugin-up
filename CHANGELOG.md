@@ -5,8 +5,9 @@
 
 ### Features
 
-* add option to exclude zero based caret dependencies ([a1527e8](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/a1527e87a0daf121ca7d7fc7a5694504f17aabb8))
-* add option to include zero based carets dependencies ([15d96a8](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/15d96a8a4f438cdf6d42d3772ceb392435649a86))
+* BREAKING: zero based caret dependencies will be updated by default, an option
+  to opt-out can be used
+  ([a1527e8](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/a1527e87a0daf121ca7d7fc7a5694504f17aabb8))
 
 
 ### Bug Fixes
