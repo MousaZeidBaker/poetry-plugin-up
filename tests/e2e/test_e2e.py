@@ -179,6 +179,12 @@ def test_command_with_exclude(
     command_call.assert_called_once_with(name="update")
 
 
+def test_exclude_zero_based_caret_without_latest_fails(
+    app_tester: ApplicationTester,
+) -> None:
+    assert app_tester.execute("up --exclude-zero-based-caret") == 1
+
+
 def test_command_preserve_wildcard(
     app_tester: ApplicationTester,
     packages: List[Package],

@@ -40,6 +40,7 @@ def test_handle_dependency(
         exclude=[],
         pyproject_content=content,
         selector=selector,
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
 
@@ -88,6 +89,7 @@ def test_handle_dependency_with_latest(
         exclude=[],
         pyproject_content=content,
         selector=selector,
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
 
@@ -136,15 +138,11 @@ def test_handle_dependency_with_zero_caret(
         exclude=[],
         pyproject_content=content,
         selector=selector,
+        exclude_zero_based_caret=True,
         preserve_wildcard=False,
     )
 
-    selector.find_best_candidate.assert_called_once_with(
-        package_name=dependency.name,
-        target_package_version="*",
-        allow_prereleases=dependency.allows_prereleases(),
-        source=dependency.source_name,
-    )
+    selector.find_best_candidate.assert_not_called()
     bump_version_in_pyproject_content.assert_not_called()
 
 
@@ -180,6 +178,7 @@ def test_handle_dependency_excluded(
         exclude=["foo"],
         pyproject_content=content,
         selector=selector,
+        exclude_zero_based_caret=False,
         preserve_wildcard=False,
     )
 
@@ -219,6 +218,7 @@ def test_handle_dependency_preserve_wildcard(
         exclude=[],
         pyproject_content=content,
         selector=selector,
+        exclude_zero_based_caret=False,
         preserve_wildcard=True,
     )
 

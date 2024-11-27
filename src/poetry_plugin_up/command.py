@@ -1,4 +1,3 @@
-import re
 from typing import Any, Dict, Iterable, List
 
 from cleo.helpers import argument, option
@@ -60,6 +59,12 @@ class UpCommand(InstallerCommand):
             "execute anything.",
         ),
         option(
+            long_name="exclude-zero-based-caret",
+            short_name=None,
+            description="Exclude zero-based caret dependencies "
+            "when updating to latest.",
+        ),
+        option(
             long_name="preserve-wildcard",
             short_name=None,
             description="Do not bump wildcard dependencies "
@@ -74,10 +79,17 @@ class UpCommand(InstallerCommand):
         no_install = self.option("no-install")
         dry_run = self.option("dry-run")
         exclude = self.option("exclude")
+        exclude_zero_based_caret = self.option("exclude-zero-based-caret")
         preserve_wildcard = self.option("preserve-wildcard")
 
         if pinned and not latest:
             self.line_error("'--pinned' specified without '--latest'")
+            raise Exception
+
+        if exclude_zero_based_caret and not latest:
+            self.line_error(
+                "'--exclude-zero-based-caret' specified without '--latest'"
+            )
             raise Exception
 
         if preserve_wildcard and not latest:
@@ -100,6 +112,7 @@ class UpCommand(InstallerCommand):
                     pyproject_content=pyproject_content,
                     selector=selector,
                     exclude=exclude,
+                    exclude_zero_based_caret=exclude_zero_based_caret,
                     preserve_wildcard=preserve_wildcard,
                 )
 
@@ -139,6 +152,7 @@ class UpCommand(InstallerCommand):
         pyproject_content: TOMLDocument,
         selector: VersionSelector,
         exclude: List[str],
+        exclude_zero_based_caret: bool,
         preserve_wildcard: bool,
     ) -> None:
         """Handles a dependency"""
@@ -149,6 +163,7 @@ class UpCommand(InstallerCommand):
             latest,
             pinned,
             exclude,
+            exclude_zero_based_caret,
             preserve_wildcard,
         ):
             return
@@ -165,11 +180,6 @@ class UpCommand(InstallerCommand):
         )
         if candidate is None:
             self.line(f"No new version for '{dependency.name}'")
-            return
-
-        # preserve zero based carets ('^0.0') when bumping
-        version = re.match(r"\^([0.]+)", dependency.pretty_constraint)
-        if version and candidate.pretty_version.startswith(version[1]):
             return
 
         if (
@@ -195,6 +205,7 @@ class UpCommand(InstallerCommand):
         latest: bool,
         pinned: bool,
         exclude: List[str],
+        exclude_zero_based_caret: bool,
         preserve_wildcard: bool,
     ) -> bool:
         """Determines if a dependency can be bumped in pyproject.toml"""
@@ -206,6 +217,11 @@ class UpCommand(InstallerCommand):
         if only_packages and dependency.name not in only_packages:
             return False
         if dependency.name in exclude:
+            return False
+        if (
+            exclude_zero_based_caret
+            and dependency.pretty_constraint.startswith("^0")
+        ):
             return False
 
         constraint = dependency.pretty_constraint
