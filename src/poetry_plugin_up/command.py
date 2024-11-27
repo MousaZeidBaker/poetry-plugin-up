@@ -218,7 +218,10 @@ class UpCommand(InstallerCommand):
             return False
         if dependency.name in exclude:
             return False
-        if exclude_zero_based_caret and dependency.pretty_constraint.startswith("^0"):
+        if (
+            exclude_zero_based_caret
+            and dependency.pretty_constraint.startswith("^0")
+        ):
             return False
 
         constraint = dependency.pretty_constraint
