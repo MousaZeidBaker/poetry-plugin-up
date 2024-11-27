@@ -182,14 +182,6 @@ class UpCommand(InstallerCommand):
             self.line(f"No new version for '{dependency.name}'")
             return
 
-<<<<<<< Updated upstream
-        # preserve zero based carets ('^0.0') when bumping
-        version = re.match(r"\^([0.]+)", dependency.pretty_constraint)
-        if version and candidate.pretty_version.startswith(version[1]):
-            return
-
-=======
->>>>>>> Stashed changes
         if (
             dependency.pretty_constraint[0] == "~"
             and "." in dependency.pretty_constraint
