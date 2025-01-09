@@ -2,7 +2,7 @@ from poetry.core.packages.dependency import Dependency
 from tomlkit import parse
 
 from src.poetry_plugin_up.command import is_pinned
-from tests.helpers import TestUpCommand
+from tests.helpers import TestUpCommand, poetry_v2
 
 
 def test_bump_version_in_pyproject_content(
@@ -52,6 +52,63 @@ def test_bump_version_in_pyproject_content(
     assert poetry_content["dependencies"]["foo"] == new_version
     assert poetry_content["dependencies"]["bar"]["version"] == new_version
     assert poetry_content["group"]["dev"]["dependencies"]["baz"] == new_version
+
+
+@poetry_v2
+def test_bump_version_in_pyproject_content_project(
+    up_cmd_tester: TestUpCommand,
+) -> None:
+
+    dependencies = [
+        Dependency(
+            name="foo",
+            constraint="^1.0",
+            groups=["main"],
+        ),
+        Dependency(
+            name="bar",
+            constraint="^1.0",
+            groups=["main"],
+            optional=True,
+        ),
+        Dependency(
+            name="baz",
+            constraint="^1.0",
+            groups=["dev"],
+        ),
+    ]
+
+    content = parse(
+        """
+        [project]
+        requires_python = ">=3.7, <4.0"
+        dependencies = ["foo>=1.0,<2.0"]
+
+        [project.optional-dependencies]
+        bar = ["bar>=1.1,<2.0"]
+
+        [dependency-groups]
+        dev = ["baz>=1.2,<2.0"]
+        """
+    )
+
+    for dependency in dependencies:
+        new_version = ">=1.9,<2.0"
+        up_cmd_tester.bump_version_in_pyproject_content(
+            dependency=dependency,
+            new_version=new_version,
+            pyproject_content=content,
+        )
+    new_version_template = f"{{package}} ({new_version})"
+    assert content["project"]["dependencies"][0] == new_version_template.format(
+        package="foo"
+    )
+    assert content["project"]["optional-dependencies"]["bar"][
+        0
+    ] == new_version_template.format(package="bar")
+    assert content["dependency-groups"]["dev"][
+        0
+    ] == new_version_template.format(package="baz")
 
 
 def test_bump_version_in_pyproject_content_with_old_dev_dependencies(

@@ -13,7 +13,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ '3.8', '3.9', '3.10', '3.11' ]
+        python-version: [ '3.9', '3.10', '3.11', '3.12', '3.13' ]
+        poetry-version: [ '1.8.4', '2.0.0' ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,7 +32,9 @@ jobs:
           version: 1.6.0
 
       - name: Install dependencies
-        run: poetry install
+        run: |
+          poetry add poetry==${{ matrix.poetry-version }}
+          poetry install
 
       - name: Lint
         run: |

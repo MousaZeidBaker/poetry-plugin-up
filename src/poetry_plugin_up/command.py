@@ -1,12 +1,15 @@
 from typing import Any, Dict, Iterable, List
 
 from cleo.helpers import argument, option
+from packaging.version import parse as parse_version
+from poetry.__version__ import __version__ as poetry_version
 from poetry.console.commands.installer_command import InstallerCommand
+from poetry.core.constraints.version import parse_constraint
 from poetry.core.packages.dependency import Dependency
 from poetry.core.packages.dependency_group import DependencyGroup
 from poetry.core.packages.package import Package
 from poetry.version.version_selector import VersionSelector
-from tomlkit import dumps
+from tomlkit import array, dumps, table
 from tomlkit.toml_document import TOMLDocument
 
 
@@ -102,19 +105,18 @@ class UpCommand(InstallerCommand):
         pyproject_content = self.poetry.file.read()
         original_pyproject_content = self.poetry.file.read()
 
-        for group in self.get_groups():
-            for dependency in group.dependencies:
-                self.handle_dependency(
-                    dependency=dependency,
-                    latest=latest,
-                    pinned=pinned,
-                    only_packages=only_packages,
-                    pyproject_content=pyproject_content,
-                    selector=selector,
-                    exclude=exclude,
-                    exclude_zero_based_caret=exclude_zero_based_caret,
-                    preserve_wildcard=preserve_wildcard,
-                )
+        for dependency in self.get_dependencies():
+            self.handle_dependency(
+                dependency=dependency,
+                latest=latest,
+                pinned=pinned,
+                only_packages=only_packages,
+                pyproject_content=pyproject_content,
+                selector=selector,
+                exclude=exclude,
+                exclude_zero_based_caret=exclude_zero_based_caret,
+                preserve_wildcard=preserve_wildcard,
+            )
 
         if dry_run:
             self.line(dumps(pyproject_content))
@@ -127,7 +129,10 @@ class UpCommand(InstallerCommand):
         try:
             if no_install:
                 # update lock file
-                self.call(name="lock")
+                if poetry_version_above_2():
+                    self.call(name="lock", args="--regenerate")
+                else:
+                    self.call(name="lock")
             else:
                 # update dependencies
                 self.call(name="update")
@@ -137,11 +142,10 @@ class UpCommand(InstallerCommand):
             raise e
         return 0
 
-    def get_groups(self) -> Iterable[DependencyGroup]:
+    def get_dependencies(self) -> Iterable[DependencyGroup]:
         """Returns activated dependency groups"""
-
         for group in self.activated_groups:
-            yield self.poetry.package.dependency_group(group)
+            yield from self.poetry.package.dependency_group(group).dependencies
 
     def handle_dependency(
         self,
@@ -156,7 +160,6 @@ class UpCommand(InstallerCommand):
         preserve_wildcard: bool,
     ) -> None:
         """Handles a dependency"""
-
         if not self.is_bumpable(
             dependency,
             only_packages,
@@ -187,7 +190,10 @@ class UpCommand(InstallerCommand):
             and "." in dependency.pretty_constraint
         ):
             new_version = "~" + candidate.pretty_version
-        elif dependency.pretty_constraint[:2] == ">=":
+        elif (
+            dependency.pretty_constraint[:2] == ">="
+            and len(dependency.pretty_constraint.split(",")) == 1
+        ):
             new_version = ">=" + candidate.pretty_version
         else:
             new_version = "^" + candidate.pretty_version
@@ -209,7 +215,6 @@ class UpCommand(InstallerCommand):
         preserve_wildcard: bool,
     ) -> bool:
         """Determines if a dependency can be bumped in pyproject.toml"""
-
         if dependency.source_type in ["git", "file", "directory"]:
             return False
         if dependency.name in ["python"]:
@@ -265,8 +270,35 @@ class UpCommand(InstallerCommand):
         pyproject_content: TOMLDocument,
     ) -> None:
         """Bumps versions in pyproject content (pyproject.toml)"""
+        project_content = pyproject_content.get("project", table())
+        if uses_pep508_style(pyproject_content):
+            for group in dependency.groups:
+                sections = []
+                if group == "main":
+                    sections.append(
+                        project_content.get("dependencies", array())
+                    )
+                    opt_deps = project_content.get("optional-dependencies", {})
+                    for section in opt_deps.values():
+                        sections.append(section)
+                elif group in (
+                    dep_groups := pyproject_content.get("dependency-groups", {})
+                ):
+                    sections.append(dep_groups.get(group, array()))
+                for section in sections:
+                    for index, entry in enumerate(section):
+                        entry_dependency = Dependency.create_from_pep_508(entry)
+                        if (
+                            entry_dependency.name == dependency.name
+                            and entry_dependency.constraint
+                            != parse_constraint(new_version)
+                        ):
+                            entry_dependency.constraint = new_version
+                            section[index] = entry_dependency.to_pep_508()
 
-        poetry_content: Dict[str, Any] = pyproject_content["tool"]["poetry"]
+        poetry_content: Dict[str, Any] = pyproject_content.get("tool", {}).get(
+            "poetry", {}
+        )
 
         for group in dependency.groups:
             # find section to modify
@@ -293,3 +325,16 @@ class UpCommand(InstallerCommand):
 def is_pinned(version: str) -> bool:
     """Returns if `version` is an exact version."""
     return version[0].isdigit() or version[:2] == "=="
+
+
+def uses_pep508_style(pyproject_content: TOMLDocument) -> bool:
+    project_content = pyproject_content.get("project", table())
+    return (
+        "dependencies" in project_content
+        or "optional-dependencies" in project_content
+        or "dependency-groups" in pyproject_content
+    )
+
+
+def poetry_version_above_2() -> bool:
+    return parse_version(poetry_version) >= parse_version("2.0.0")
