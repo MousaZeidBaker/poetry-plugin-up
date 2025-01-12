@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 from typing import List
 
@@ -48,7 +49,12 @@ def tmp_pyproject_path(
     tmp_pyproject_path = (
         tmp_path_factory.mktemp("simple_project") / "pyproject.toml"
     )
-    tmp_pyproject_path.write_text(pyproject_content.as_string(), newline="\n")
+    if sys.version_info >= (3, 10):
+        tmp_pyproject_path.write_text(
+            pyproject_content.as_string(), newline="\n"
+        )
+    else:
+        tmp_pyproject_path.write_text(pyproject_content.as_string())
     return tmp_pyproject_path
 
 
@@ -78,9 +84,12 @@ def tmp_pyproject_path_v2(
     tmp_pyproject_path = (
         tmp_path_factory.mktemp("simple_project_poetry_v2") / "pyproject.toml"
     )
-    tmp_pyproject_path.write_text(
-        pyproject_content_v2.as_string(), newline="\n"
-    )
+    if sys.version_info >= (3, 10):
+        tmp_pyproject_path.write_text(
+            pyproject_content_v2.as_string(), newline="\n"
+        )
+    else:
+        tmp_pyproject_path.write_text(pyproject_content_v2.as_string())
     return tmp_pyproject_path
 
 
