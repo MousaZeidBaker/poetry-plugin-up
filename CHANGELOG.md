@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/v0.8.0...v0.9.0) (2025-01-15)
+
+
+### Features
+
+* Add support for poetry 2 ([0e085e0](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/0e085e0d94c6251182056d8a42b958c05d9f2586))
+
+
+### Bug Fixes
+
+* Path.write_text does not have newline kwarg in 3.9 ([7b7955a](https://github.com/MousaZeidBaker/poetry-plugin-up/commit/7b7955a9466df664a65b8829837c0abd1e2b69b5))
+
 ## [0.8.0](https://github.com/MousaZeidBaker/poetry-plugin-up/compare/v0.7.3...v0.8.0) (2024-11-27)
 
 
