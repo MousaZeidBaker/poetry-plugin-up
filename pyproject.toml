@@ -31,7 +31,7 @@ poetry = ">=1.8.4, <3.0.0"
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^2.21.0"
 pytest = "^7.4.4"
-pytest-mock = "^3.14.0"
+pytest-mock = "^3.15.1"
 
 [tool.poetry.plugins."poetry.application.plugin"]
 up = "poetry_plugin_up.plugin:UpApplicationPlugin"
